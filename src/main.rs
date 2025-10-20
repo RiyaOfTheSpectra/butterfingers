@@ -1,4 +1,7 @@
+mod morsels;
+
 use std::io;
+use morsels::tutor;
 use crossterm::event::{
     self,
     Event,
@@ -17,5 +20,9 @@ use ratatui::{
     Frame,
 };
 
-fn main() -> Result<()> {
+fn main() -> io::Result<()> {
+    let mut terminal = ratatui::init();
+    let app_result = tutor::init().run(&mut terminal);
+    ratatui::restore();
+    app_result
 }
