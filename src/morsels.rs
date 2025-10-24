@@ -11,29 +11,38 @@ use crossterm::event::{
     poll,
 };
 use ratatui::{
-    buffer::Buffer,
+    widgets::{
+        Block,
+        Paragraph,
+        Widget,
+        Row,
+        Table,
+    },
     layout::{
         Layout,
         Rect,
         Direction,
         Constraint,
     },
+    buffer::Buffer,
     style::Stylize,
     symbols::border,
     text::{Line, Text,},
-    widgets::{Block, Paragraph, Widget,},
     DefaultTerminal,
     Frame,
 };
+
+use crate::config::*;
 
 #[derive(Debug,Clone,Copy)]
 enum Mode {
     Checking,
     Testing,
     Waiting,
+    Controls,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug,Clone)]
 pub struct tutor {
     letters: String,
     mode: Mode,
@@ -76,20 +85,25 @@ impl tutor {
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match self.mode{
             Mode::Waiting => match key_event.code {
+                KeyCode::Char('m') => self.to_mode(Mode::Controls),
                 KeyCode::Char('q') => self.exit(),
-                KeyCode::Char(' ') => self.start(),
+                KeyCode::Char(' ') => self.to_mode(Mode::Testing),
                 _ => {}
             }
             Mode::Testing => {
-                match key_event.code.as_char() {
-                    Some(x) => {
-                        self.letters.push(x);
-                    }
-                    None => {
-                        self.exit_writing();
-                    }
+                match key_event.code {
+                    KeyCode::Char(x) => self.letters.push(x),
+                    KeyCode::Esc => self.to_mode(Mode::Waiting),
+                    KeyCode::Backspace => _ = self.letters.pop(),
+                    _ => {}
                 }
             }
+            Mode::Controls => {
+                match key_event.code {
+                    KeyCode::Esc => self.to_mode(Mode::Waiting),
+                    _ => {}
+                }
+            },
             Mode::Checking => {},
         }
     }
@@ -98,12 +112,8 @@ impl tutor {
         self.exit = true;
     }
 
-    fn start(&mut self) {
-        self.mode = Mode::Testing;
-    }
-
-    fn exit_writing(&mut self) {
-        self.mode = Mode::Waiting;
+    fn to_mode(&mut self, mode: Mode) {
+        self.mode = mode;
     }
 }
 
@@ -121,7 +131,8 @@ impl Widget for &tutor {
         let bottom = Layout::default()
             .direction(Direction::Horizontal)
             .constraints(vec![
-                Constraint::Percentage(70),
+                Constraint::Percentage(40),
+                Constraint::Percentage(30),
                 Constraint::Percentage(30),
             ])
             .split(inside[2]);
@@ -129,6 +140,8 @@ impl Widget for &tutor {
         let title = Line::from(" Uncle Sam’s Training Terminal ".bold());
 
         let instructions = Line::from(vec![
+            " Controls ".into(),
+            "<M> ".blue().bold(),
             " Start ".into(),
             "<SPACE>".blue().bold(),
             " Quit ".into(),
@@ -153,6 +166,10 @@ impl Widget for &tutor {
             .title(Line::from("Comments").left_aligned())
             .border_set(border::PLAIN);
 
+        let control_block = Block::bordered()
+            .title(Line::from("Controls").left_aligned())
+            .border_set(border::PLAIN);
+
         let input_text = Text::from(
             vec![
                 Line::from(self.letters.clone().yellow()),
@@ -161,6 +178,8 @@ impl Widget for &tutor {
         let result_text = Text::from(vec![]);
 
         let comment_text = Text::from(vec![]);
+
+        let control_table = Config::init();
 
         Paragraph::new(input_text)
             .left_aligned()
@@ -176,5 +195,9 @@ impl Widget for &tutor {
             .left_aligned()
             .block(comment_block)
             .render(bottom[1], buf);
+
+        control_table.to_table([Constraint::Percentage(90), Constraint::Percentage(10)])
+            .block(control_block)
+            .render(bottom[2], buf);
     }
 }
