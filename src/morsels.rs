@@ -39,7 +39,7 @@ enum Mode {
     Checking,
     Testing,
     Waiting,
-    Controls,
+    Control,
 }
 
 #[derive(Debug,Clone)]
@@ -84,27 +84,35 @@ impl tutor {
 
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match self.mode{
-            Mode::Waiting => match key_event.code {
-                KeyCode::Char('m') => self.to_mode(Mode::Controls),
-                KeyCode::Char('q') => self.exit(),
-                KeyCode::Char(' ') => self.to_mode(Mode::Testing),
-                _ => {}
-            }
-            Mode::Testing => {
-                match key_event.code {
-                    KeyCode::Char(x) => self.letters.push(x),
-                    KeyCode::Esc => self.to_mode(Mode::Waiting),
-                    KeyCode::Backspace => _ = self.letters.pop(),
-                    _ => {}
-                }
-            }
-            Mode::Controls => {
-                match key_event.code {
-                    KeyCode::Esc => self.to_mode(Mode::Waiting),
-                    _ => {}
-                }
-            },
+            Mode::Waiting => self.handle_waiting_key(key_event),
+            Mode::Testing => self.handle_testing_key(key_event),
+            Mode::Control => self.handle_control_key(key_event),
             Mode::Checking => {},
+        }
+    }
+
+    fn handle_waiting_key(&mut self, key_event: KeyEvent) {
+        match key_event.code {
+            KeyCode::Char('m') => self.to_mode(Mode::Control),
+            KeyCode::Char('q') => self.exit(),
+            KeyCode::Char(' ') => self.to_mode(Mode::Testing),
+            _ => {}
+        }
+    }
+
+    fn handle_testing_key(&mut self, key_event: KeyEvent) {
+        match key_event.code {
+            KeyCode::Char(x) => self.letters.push(x),
+            KeyCode::Esc => self.to_mode(Mode::Waiting),
+            KeyCode::Backspace => _ = self.letters.pop(),
+            _ => {}
+        }
+    }
+
+    fn handle_control_key(&mut self, key_event: KeyEvent) {
+        match key_event.code {
+            KeyCode::Esc => self.to_mode(Mode::Waiting),
+            _ => {}
         }
     }
 
@@ -116,6 +124,7 @@ impl tutor {
         self.mode = mode;
     }
 }
+
 
 impl Widget for &tutor {
     fn render(self, area: Rect, buf: &mut Buffer) {
@@ -140,7 +149,7 @@ impl Widget for &tutor {
         let title = Line::from(" Uncle Sam’s Training Terminal ".bold());
 
         let instructions = Line::from(vec![
-            " Controls ".into(),
+            " Control ".into(),
             "<M> ".blue().bold(),
             " Start ".into(),
             "<SPACE>".blue().bold(),
