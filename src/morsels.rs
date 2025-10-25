@@ -33,6 +33,7 @@ use ratatui::{
 };
 
 use crate::config::*;
+use crate::keying::*;
 
 #[derive(Debug,Clone,Copy)]
 enum Mode {
@@ -44,16 +45,20 @@ enum Mode {
 
 #[derive(Debug,Clone)]
 pub struct tutor {
-    letters: String,
+    input_letters: String,
     mode: Mode,
+    config: Config,
+    sequence: Vec<char>,
     exit: bool,
 }
 
 impl tutor {
     pub fn init() -> Self {
         tutor {
-            letters : String::from(""),
+            input_letters : String::from(""),
             mode: Mode::Waiting,
+            config: Config::init(),
+            sequence: vec!['k', 'm'],
             exit : false,
         }
     }
@@ -102,9 +107,9 @@ impl tutor {
 
     fn handle_testing_key(&mut self, key_event: KeyEvent) {
         match key_event.code {
-            KeyCode::Char(x) => self.letters.push(x),
+            KeyCode::Char(x) => self.input_letters.push(x),
             KeyCode::Esc => self.to_mode(Mode::Waiting),
-            KeyCode::Backspace => _ = self.letters.pop(),
+            KeyCode::Backspace => _ = self.input_letters.pop(),
             _ => {}
         }
     }
@@ -116,15 +121,14 @@ impl tutor {
         }
     }
 
-    fn exit(&mut self) {
-        self.exit = true;
-    }
-
     fn to_mode(&mut self, mode: Mode) {
         self.mode = mode;
     }
-}
 
+    fn exit(&mut self) {
+        self.exit = true;
+    }
+}
 
 impl Widget for &tutor {
     fn render(self, area: Rect, buf: &mut Buffer) {
@@ -181,14 +185,12 @@ impl Widget for &tutor {
 
         let input_text = Text::from(
             vec![
-                Line::from(self.letters.clone().yellow()),
+                Line::from(self.input_letters.clone().yellow()),
         ]);
 
         let result_text = Text::from(vec![]);
 
         let comment_text = Text::from(vec![]);
-
-        let control_table = Config::init();
 
         Paragraph::new(input_text)
             .left_aligned()
@@ -205,7 +207,7 @@ impl Widget for &tutor {
             .block(comment_block)
             .render(bottom[1], buf);
 
-        control_table.to_table([Constraint::Percentage(90), Constraint::Percentage(10)])
+        self.config.to_table([Constraint::Percentage(90), Constraint::Percentage(10)])
             .block(control_block)
             .render(bottom[2], buf);
     }

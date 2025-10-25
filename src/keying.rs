@@ -69,203 +69,164 @@ pub fn create_morse_characters() -> CodeDict {
     code_dict
 }
 
-pub fn generate_level_characters(level: u8) -> Option<Vec<char>> {
+pub fn generate_level_characters(level: u8, mut sequence: Vec<char>) -> Option<Vec<char>> {
     match level {
         1  => vec!['k', 'm'].into(),
         2  => {
-            let mut result = generate_level_characters( 1)?;
-            result.push('u');
-            Some(result)
+            sequence.push('u');
+            Some(sequence)
         }
         3  => {
-            let mut result = generate_level_characters( 2)?;
-            result.push('r');
-            Some(result)
+            sequence.push('r');
+            Some(sequence)
         }
         4  => {
-            let mut result = generate_level_characters( 3)?;
-            result.push('e');
-            Some(result)
+            sequence.push('e');
+            Some(sequence)
         }
         5  => {
-            let mut result = generate_level_characters( 4)?;
-            result.push('s');
-            Some(result)
+            sequence.push('s');
+            Some(sequence)
         }
         6  => {
-            let mut result = generate_level_characters( 5)?;
-            result.push('n');
-            Some(result)
+            sequence.push('n');
+            Some(sequence)
         }
         7  => {
-            let mut result = generate_level_characters( 6)?;
-            result.push('a');
-            Some(result)
+            sequence.push('a');
+            Some(sequence)
         }
         8  => {
-            let mut result = generate_level_characters( 7)?;
-            result.push('p');
-            Some(result)
+            sequence.push('p');
+            Some(sequence)
         }
         9  => {
-            let mut result = generate_level_characters( 8)?;
-            result.push('t');
-            Some(result)
+            sequence.push('t');
+            Some(sequence)
         }
         10 => {
-            let mut result = generate_level_characters( 9)?;
-            result.push('l');
-            Some(result)
+            sequence.push('l');
+            Some(sequence)
         }
         11 => {
-            let mut result = generate_level_characters(10)?;
-            result.push('w');
-            Some(result)
+            sequence.push('w');
+            Some(sequence)
         }
         12 => {
-            let mut result = generate_level_characters(11)?;
-            result.push('i');
-            Some(result)
+            sequence.push('i');
+            Some(sequence)
         }
         13 => {
-            let mut result = generate_level_characters(12)?;
-            result.push('.');
-            Some(result)
+            sequence.push('.');
+            Some(sequence)
         }
         14 => {
-            let mut result = generate_level_characters(13)?;
-            result.push('j');
-            Some(result)
+            sequence.push('j');
+            Some(sequence)
         }
         15 => {
-            let mut result = generate_level_characters(14)?;
-            result.push('z');
-            Some(result)
+            sequence.push('z');
+            Some(sequence)
         }
         16 => {
-            let mut result = generate_level_characters(15)?;
-            result.push('=');
-            Some(result)
+            sequence.push('=');
+            Some(sequence)
         }
         17 => {
-            let mut result = generate_level_characters(16)?;
-            result.push('f');
-            Some(result)
+            sequence.push('f');
+            Some(sequence)
         }
         18 => {
-            let mut result = generate_level_characters(17)?;
-            result.push('o');
-            Some(result)
+            sequence.push('o');
+            Some(sequence)
         }
         19 => {
-            let mut result = generate_level_characters(18)?;
-            result.push('y');
-            Some(result)
+            sequence.push('y');
+            Some(sequence)
         }
         20 => {
-            let mut result = generate_level_characters(19)?;
-            result.push(',');
-            Some(result)
+            sequence.push(',');
+            Some(sequence)
         }
         21 => {
-            let mut result = generate_level_characters(20)?;
-            result.push('v');
-            Some(result)
+            sequence.push('v');
+            Some(sequence)
         }
         22 => {
-            let mut result = generate_level_characters(21)?;
-            result.push('g');
-            Some(result)
+            sequence.push('g');
+            Some(sequence)
         }
         23 => {
-            let mut result = generate_level_characters(22)?;
-            result.push('5');
-            Some(result)
+            sequence.push('5');
+            Some(sequence)
         }
         24 => {
-            let mut result = generate_level_characters(23)?;
-            result.push('1');
-            Some(result)
+            sequence.push('1');
+            Some(sequence)
         }
         25 => {
-            let mut result = generate_level_characters(24)?;
-            result.push('q');
-            Some(result)
+            sequence.push('q');
+            Some(sequence)
         }
         26 => {
-            let mut result = generate_level_characters(25)?;
-            result.push('9');
-            Some(result)
+            sequence.push('9');
+            Some(sequence)
         }
         27 => {
-            let mut result = generate_level_characters(26)?;
-            result.push('2');
-            Some(result)
+            sequence.push('2');
+            Some(sequence)
         }
         28 => {
-            let mut result = generate_level_characters(27)?;
-            result.push('h');
-            Some(result)
+            sequence.push('h');
+            Some(sequence)
         }
         29 => {
-            let mut result = generate_level_characters(28)?;
-            result.push('3');
-            Some(result)
+            sequence.push('3');
+            Some(sequence)
         }
         30 => {
-            let mut result = generate_level_characters(29)?;
-            result.push('8');
-            Some(result)
+            sequence.push('8');
+            Some(sequence)
         }
         31 => {
-            let mut result = generate_level_characters(30)?;
-            result.push('b');
-            Some(result)
+            sequence.push('b');
+            Some(sequence)
         }
         32 => {
-            let mut result = generate_level_characters(31)?;
-            result.push('?');
-            Some(result)
+            sequence.push('?');
+            Some(sequence)
         }
         33 => {
-            let mut result = generate_level_characters(32)?;
-            result.push('4');
-            Some(result)
+            sequence.push('4');
+            Some(sequence)
         }
         34 => {
-            let mut result = generate_level_characters(33)?;
-            result.push('7');
-            Some(result)
+            sequence.push('7');
+            Some(sequence)
         }
         35 => {
-            let mut result = generate_level_characters(34)?;
-            result.push('c');
-            Some(result)
+            sequence.push('c');
+            Some(sequence)
         }
         36 => {
-            let mut result = generate_level_characters(35)?;
-            result.push('1');
-            Some(result)
+            sequence.push('1');
+            Some(sequence)
         }
         37 => {
-            let mut result = generate_level_characters(36)?;
-            result.push('d');
-            Some(result)
+            sequence.push('d');
+            Some(sequence)
         }
         38 => {
-            let mut result = generate_level_characters(37)?;
-            result.push('6');
-            Some(result)
+            sequence.push('6');
+            Some(sequence)
         }
         39 => {
-            let mut result = generate_level_characters(38)?;
-            result.push('0');
-            Some(result)
+            sequence.push('0');
+            Some(sequence)
         }
         40 => {
-            let mut result = generate_level_characters(39)?;
-            result.push('x');
-            Some(result)
+            sequence.push('x');
+            Some(sequence)
         }
         _ => None
     }
