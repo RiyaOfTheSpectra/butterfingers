@@ -69,165 +69,165 @@ pub fn create_morse_characters() -> CodeDict {
     code_dict
 }
 
-pub fn generate_level_characters(level: u8, mut sequence: Vec<char>) -> Option<Vec<char>> {
+pub fn generate_level_characters(level: u8, mut sequence: Vec<char>) -> Vec<char> {
     match level {
-        1  => vec!['k', 'm'].into(),
+        1  => vec!['k', 'm'],
         2  => {
             sequence.push('u');
-            Some(sequence)
+            sequence
         }
         3  => {
             sequence.push('r');
-            Some(sequence)
+            sequence
         }
         4  => {
             sequence.push('e');
-            Some(sequence)
+            sequence
         }
         5  => {
             sequence.push('s');
-            Some(sequence)
+            sequence
         }
         6  => {
             sequence.push('n');
-            Some(sequence)
+            sequence
         }
         7  => {
             sequence.push('a');
-            Some(sequence)
+            sequence
         }
         8  => {
             sequence.push('p');
-            Some(sequence)
+            sequence
         }
         9  => {
             sequence.push('t');
-            Some(sequence)
+            sequence
         }
         10 => {
             sequence.push('l');
-            Some(sequence)
+            sequence
         }
         11 => {
             sequence.push('w');
-            Some(sequence)
+            sequence
         }
         12 => {
             sequence.push('i');
-            Some(sequence)
+            sequence
         }
         13 => {
             sequence.push('.');
-            Some(sequence)
+            sequence
         }
         14 => {
             sequence.push('j');
-            Some(sequence)
+            sequence
         }
         15 => {
             sequence.push('z');
-            Some(sequence)
+            sequence
         }
         16 => {
             sequence.push('=');
-            Some(sequence)
+            sequence
         }
         17 => {
             sequence.push('f');
-            Some(sequence)
+            sequence
         }
         18 => {
             sequence.push('o');
-            Some(sequence)
+            sequence
         }
         19 => {
             sequence.push('y');
-            Some(sequence)
+            sequence
         }
         20 => {
             sequence.push(',');
-            Some(sequence)
+            sequence
         }
         21 => {
             sequence.push('v');
-            Some(sequence)
+            sequence
         }
         22 => {
             sequence.push('g');
-            Some(sequence)
+            sequence
         }
         23 => {
             sequence.push('5');
-            Some(sequence)
+            sequence
         }
         24 => {
             sequence.push('1');
-            Some(sequence)
+            sequence
         }
         25 => {
             sequence.push('q');
-            Some(sequence)
+            sequence
         }
         26 => {
             sequence.push('9');
-            Some(sequence)
+            sequence
         }
         27 => {
             sequence.push('2');
-            Some(sequence)
+            sequence
         }
         28 => {
             sequence.push('h');
-            Some(sequence)
+            sequence
         }
         29 => {
             sequence.push('3');
-            Some(sequence)
+            sequence
         }
         30 => {
             sequence.push('8');
-            Some(sequence)
+            sequence
         }
         31 => {
             sequence.push('b');
-            Some(sequence)
+            sequence
         }
         32 => {
             sequence.push('?');
-            Some(sequence)
+            sequence
         }
         33 => {
             sequence.push('4');
-            Some(sequence)
+            sequence
         }
         34 => {
             sequence.push('7');
-            Some(sequence)
+            sequence
         }
         35 => {
             sequence.push('c');
-            Some(sequence)
+            sequence
         }
         36 => {
             sequence.push('1');
-            Some(sequence)
+            sequence
         }
         37 => {
             sequence.push('d');
-            Some(sequence)
+            sequence
         }
         38 => {
             sequence.push('6');
-            Some(sequence)
+            sequence
         }
         39 => {
             sequence.push('0');
-            Some(sequence)
+            sequence
         }
         40 => {
             sequence.push('x');
-            Some(sequence)
+            sequence
         }
-        _ => None
+        _ => sequence
     }
 }

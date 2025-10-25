@@ -58,7 +58,7 @@ impl tutor {
             input_letters : String::from(""),
             mode: Mode::Waiting,
             config: Config::init(),
-            sequence: vec!['k', 'm'],
+            sequence: generate_level_characters(1, vec![' ']),
             exit : false,
         }
     }
