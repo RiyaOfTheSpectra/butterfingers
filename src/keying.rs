@@ -1,13 +1,16 @@
 use std::vec::Vec;
 use std::collections::HashMap;
-use deranged::RangedU8;
 
-//use cpal::Data;
-//use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use cpal::Data;
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
+#[derive(Debug,Clone,Copy)]
 enum Code {
     Dit,
     Dah,
+    Char,
+    Word,
+    Sentence,
 }
 
 type Seq = Vec<Code>;
@@ -66,168 +69,53 @@ pub fn create_morse_characters() -> CodeDict {
     code_dict.insert('/', vec![Code::Dah,Code::Dit,Code::Dit,Code::Dah,Code::Dit]);
     code_dict.insert('=', vec![Code::Dah,Code::Dit,Code::Dit,Code::Dit,Code::Dah]);
 
+    code_dict.insert(' ', vec![Code::Char]);
+
     code_dict
 }
 
-pub fn generate_level_characters(level: u8, mut sequence: Vec<char>) -> Vec<char> {
+pub fn gen_lev_chars(level: u8, sequence: &mut Vec<char>) {
     match level {
-        1  => vec!['k', 'm'],
-        2  => {
-            sequence.push('u');
-            sequence
-        }
-        3  => {
-            sequence.push('r');
-            sequence
-        }
-        4  => {
-            sequence.push('e');
-            sequence
-        }
-        5  => {
-            sequence.push('s');
-            sequence
-        }
-        6  => {
-            sequence.push('n');
-            sequence
-        }
-        7  => {
-            sequence.push('a');
-            sequence
-        }
-        8  => {
-            sequence.push('p');
-            sequence
-        }
-        9  => {
-            sequence.push('t');
-            sequence
-        }
-        10 => {
-            sequence.push('l');
-            sequence
-        }
-        11 => {
-            sequence.push('w');
-            sequence
-        }
-        12 => {
-            sequence.push('i');
-            sequence
-        }
-        13 => {
-            sequence.push('.');
-            sequence
-        }
-        14 => {
-            sequence.push('j');
-            sequence
-        }
-        15 => {
-            sequence.push('z');
-            sequence
-        }
-        16 => {
-            sequence.push('=');
-            sequence
-        }
-        17 => {
-            sequence.push('f');
-            sequence
-        }
-        18 => {
-            sequence.push('o');
-            sequence
-        }
-        19 => {
-            sequence.push('y');
-            sequence
-        }
-        20 => {
-            sequence.push(',');
-            sequence
-        }
-        21 => {
-            sequence.push('v');
-            sequence
-        }
-        22 => {
-            sequence.push('g');
-            sequence
-        }
-        23 => {
-            sequence.push('5');
-            sequence
-        }
-        24 => {
-            sequence.push('1');
-            sequence
-        }
-        25 => {
-            sequence.push('q');
-            sequence
-        }
-        26 => {
-            sequence.push('9');
-            sequence
-        }
-        27 => {
-            sequence.push('2');
-            sequence
-        }
-        28 => {
-            sequence.push('h');
-            sequence
-        }
-        29 => {
-            sequence.push('3');
-            sequence
-        }
-        30 => {
-            sequence.push('8');
-            sequence
-        }
-        31 => {
-            sequence.push('b');
-            sequence
-        }
-        32 => {
-            sequence.push('?');
-            sequence
-        }
-        33 => {
-            sequence.push('4');
-            sequence
-        }
-        34 => {
-            sequence.push('7');
-            sequence
-        }
-        35 => {
-            sequence.push('c');
-            sequence
-        }
-        36 => {
-            sequence.push('1');
-            sequence
-        }
-        37 => {
-            sequence.push('d');
-            sequence
-        }
-        38 => {
-            sequence.push('6');
-            sequence
-        }
-        39 => {
-            sequence.push('0');
-            sequence
-        }
-        40 => {
-            sequence.push('x');
-            sequence
-        }
-        _ => sequence
+        1  => *sequence = vec!['k', 'm'],
+        2  => sequence.push('u'),
+        3  => sequence.push('r'),
+        4  => sequence.push('e'),
+        5  => sequence.push('s'),
+        6  => sequence.push('n'),
+        7  => sequence.push('a'),
+        8  => sequence.push('p'),
+        9  => sequence.push('t'),
+        10 => sequence.push('l'),
+        11 => sequence.push('w'),
+        12 => sequence.push('i'),
+        13 => sequence.push('.'),
+        14 => sequence.push('j'),
+        15 => sequence.push('z'),
+        16 => sequence.push('='),
+        17 => sequence.push('f'),
+        18 => sequence.push('o'),
+        19 => sequence.push('y'),
+        20 => sequence.push(','),
+        21 => sequence.push('v'),
+        22 => sequence.push('g'),
+        23 => sequence.push('5'),
+        24 => sequence.push('1'),
+        25 => sequence.push('q'),
+        26 => sequence.push('9'),
+        27 => sequence.push('2'),
+        28 => sequence.push('h'),
+        29 => sequence.push('3'),
+        30 => sequence.push('8'),
+        31 => sequence.push('b'),
+        32 => sequence.push('?'),
+        33 => sequence.push('4'),
+        34 => sequence.push('7'),
+        35 => sequence.push('c'),
+        36 => sequence.push('1'),
+        37 => sequence.push('d'),
+        38 => sequence.push('6'),
+        39 => sequence.push('0'),
+        40 => sequence.push('x'),
+        _ => {}
     }
 }

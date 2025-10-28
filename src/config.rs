@@ -28,6 +28,7 @@ pub struct Config {
     char_spd: u8,
     effc_spd: u8,
     ex_wd_sp: u8,
+    level   : u8,
     tone_hz : u16,
     group_ln: Len,
 }
@@ -39,6 +40,7 @@ impl Config {
             effc_spd: 20,
             ex_wd_sp: 0,
             tone_hz : 440,
+            level   : 1,
             group_ln: Len::Constant(5),
         }
     }

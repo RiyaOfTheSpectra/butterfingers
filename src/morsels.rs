@@ -54,11 +54,13 @@ pub struct tutor {
 
 impl tutor {
     pub fn init() -> Self {
+        let mut seq = vec![' '];
+        gen_lev_chars(1, &mut seq);
         tutor {
             input_letters : String::from(""),
             mode: Mode::Waiting,
             config: Config::init(),
-            sequence: generate_level_characters(1, vec![' ']),
+            sequence: seq,
             exit : false,
         }
     }
