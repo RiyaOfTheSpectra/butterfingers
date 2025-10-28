@@ -1,8 +1,10 @@
 use std::vec::Vec;
 use std::collections::HashMap;
 
-use cpal::Data;
+use cpal::{Data, StreamConfig};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+
+use crate::config::Config;
 
 #[derive(Debug,Clone,Copy)]
 enum Code {
@@ -10,12 +12,28 @@ enum Code {
     Dah,
     Char,
     Word,
-    Sentence,
+    Sent,
 }
 
 type Seq = Vec<Code>;
 
 type CodeDict = HashMap<char, Seq>;
+
+fn calc_len(seq: &Seq, conf: &Config) -> u32 {
+    let mut time: u32 = 0;
+
+    for chr in seq {
+        time += match chr {
+            Code::Dit   => (conf.char_sp_ms as u32),
+            Code::Char  => (conf.char_sp_ms as u32),
+            Code::Dah   => (conf.char_sp_ms as u32 * 3),
+            Code::Word  => (conf.char_sp_ms as u32 * 3 + conf.ex_wd_sp_ms as u32),
+            Code::Sent  => (conf.char_sp_ms as u32 * 7 + conf.ex_wd_sp_ms as u32),
+        }
+    }
+
+    time
+}
 
 pub fn create_morse_characters() -> CodeDict {
     let mut code_dict: CodeDict = HashMap::new();
@@ -118,4 +136,12 @@ pub fn gen_lev_chars(level: u8, sequence: &mut Vec<char>) {
         40 => sequence.push('x'),
         _ => {}
     }
+}
+
+pub fn play_chars(
+    seq: Seq,
+	dev: &impl DeviceTrait,
+	s_conf: &StreamConfig,
+	t_conf: &Config
+    ) {
 }
