@@ -35,7 +35,8 @@ pub struct Config {
 impl Config {
     pub fn init() -> Self {
         Self {
-            char_sp_ms  : 25,
+            // TODO: Find reasonable values for char_sp_ms & ex_wd_sp_ms.
+            char_sp_ms  : 300,
             ex_wd_sp_ms : 0,
             tone_hz     : 440,
             level       : 1,
@@ -70,3 +71,4 @@ impl Config {
         )
     }
 }
+

@@ -55,7 +55,7 @@ pub struct tutor {
 impl tutor {
     pub fn init() -> Self {
         let mut seq = vec![' '];
-        gen_lev_chars(1, &mut seq);
+        crate::keying::gen_lev_chars(1, &mut seq);
         tutor {
             input_letters : String::from(""),
             mode: Mode::Waiting,
