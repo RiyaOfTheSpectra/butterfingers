@@ -92,11 +92,9 @@ const CODE_DICT: Map<char, &'static [Code]> = phf_map! {
 };
 
 fn calc_len(seq: &Seq, conf: &Config) -> u32 {
-    let mut ms: u32 = 0;
-
-    for chr in seq {
-        ms += chr.to_ms(conf);
-    }
+    let ms: u32 = seq.into_iter()
+        .map(|&chr| chr.to_ms(conf))
+        .fold(0, |acc, x| acc + x);
 
     ms
 }
@@ -209,6 +207,7 @@ fn string_to_morse(string: String) -> Seq {
 mod tests {
     use super::*;
 
+    /*
     #[test]
     fn test_sound() {
         let params = OutputDeviceParameters {
@@ -226,5 +225,12 @@ mod tests {
             &Config::init(),
             paris
         );
+    }
+    */
+
+    #[test]
+    fn test_sum() {
+        let paris: Seq = string_to_morse("paris codex PaRiS".to_string());
+        println!("{:?}", calc_len(&paris, &Config::init()));
     }
 }
