@@ -24,19 +24,21 @@ enum Code {
     Dah,
     Char,
     Word,
-    Sent,
     Inter,
 }
 
 impl Code {
-    fn to_ms(&self, conf: &Config) -> u32 {
+    fn to_duration(&self, conf: &Config) -> Duration {
+        let char_len        = Duration::from_millis((1200 / conf.chr_wpm).into());
+        let del_unit_len    = Duration::from_millis(
+            (((60_000 / conf.trx_wpm) - (37_200 / conf.chr_wpm)) / 19).into()
+            );
         match self {
-            Code::Dit   => conf.char_sp_ms as u32,
-            Code::Dah   => conf.char_sp_ms as u32 * 3,
-            Code::Char  => conf.char_sp_ms as u32 * 3,
-            Code::Word  => conf.char_sp_ms as u32 * 5 + conf.ex_wd_sp_ms as u32,
-            Code::Sent  => conf.char_sp_ms as u32 * 7 + conf.ex_wd_sp_ms as u32,
-            Code::Inter => conf.char_sp_ms as u32,
+            Code::Dit   => char_len,
+            Code::Dah   => char_len.saturating_mul(3),
+            Code::Inter => char_len,
+            Code::Char  => del_unit_len.saturating_mul(3),
+            Code::Word  => del_unit_len.saturating_mul(7),
         }
     }
 }
@@ -144,12 +146,12 @@ pub fn gen_lev_chars(level: u8, sequence: &mut Str) {
 }
 // TODO: There has to be a better way.
 
-fn calc_len(seq: &Seq, conf: &Config) -> u32 {
-    let ms: u32 = seq.into_iter()
-        .map(|&chr| chr.to_ms(conf))
-        .fold(0, |acc, x| acc + x);
+fn calc_len(seq: &Seq, conf: &Config) -> Duration {
+    let duration = seq.into_iter()
+        .map(|&chr| chr.to_duration(conf))
+        .fold(Duration::from_millis(0), |acc, x| acc.saturating_add(x));
 
-    ms
+    duration
 }
 
 fn string_to_morse(string: &String) -> Seq {
@@ -168,9 +170,9 @@ fn string_to_morse(string: &String) -> Seq {
     code
 }
 
-fn const_words(conf: &Config, len: u8) -> String {
+fn const_words(conf: &Config, len: u8, word_num: u16) -> String {
     let mut rng = rng();
-    let word_num = conf.duration.as_secs() * conf.real_wpm as u64 / 60;
+    let word_num = conf.duration.as_secs() * conf.trx_wpm as u64 / 60;
 
     let mut phrase = String::new();
     for _i in 0..word_num {
@@ -183,9 +185,8 @@ fn const_words(conf: &Config, len: u8) -> String {
     phrase
 }
 
-fn rand_words(conf: &Config, low: u8, high: u8) -> String {
+fn rand_words(conf: &Config, low: u8, high: u8, word_num: u16) -> String {
     let mut rng = rng();
-    let word_num = conf.duration.as_secs() * conf.real_wpm as u64 / 60;
 
     let mut phrase = String::new();
     for _i in 1..word_num {
@@ -199,22 +200,44 @@ fn rand_words(conf: &Config, low: u8, high: u8) -> String {
 }
 
 pub fn random_string(conf: &Config) -> String {
+    let low : u8;
+    let high: u8;
+
     match conf.group_ln {
-        Len::Constant(len) => const_words(conf, len),
-        Len::Random(l, h)  => rand_words(conf, l, h),
+        Len::Constant(len) => {
+            low  = len;
+            high = len;
+        },
+        Len::Random(l, h)  => {
+            low  = l;
+            high = h;
+        },
     }
+
+    let mut rng = rng();
+    let word_num = conf.duration.as_secs() * conf.trx_wpm as u64 / 60;
+
+    let mut phrase = String::new();
+    for _i in 1..word_num {
+        for _j in 1..rng.random_range(low..=high) {
+            phrase.push(conf.usables.choose(&mut rng).unwrap().clone());
+        }
+        phrase.push(' ');
+    }
+
+    phrase
 }
 
 pub fn play_chars(params: OutputDeviceParameters, conf: Config, seq: String) {
     let code = string_to_morse(&seq);
     let ch_cnt = params.channels_count;
 
-    let len = calc_len(&code, &conf) as usize;
+    let len = calc_len(&code, &conf).as_millis() as usize;
     let mut mask = vec![false; 44 * ch_cnt * len];
 
     let mut i: usize = 0;
     for cd in code.into_iter() {
-        let ms = 44 * ch_cnt * cd.to_ms(&conf) as usize;
+        let ms = 44 * ch_cnt * cd.to_duration(&conf).as_millis() as usize;
         match cd {
             Code::Dit | Code::Dah => {
                 mask[i..i+ms].copy_from_slice(vec![true; ms].as_slice());
@@ -255,31 +278,17 @@ mod tests {
     use super::*;
 
     #[test]
-    fn gen_string() {
+    fn play_string() {
         let conf = Config::init();
+
+        let params = OutputDeviceParameters {
+            channels_count          : 2,
+            sample_rate             : 44_100,
+            channel_sample_count    : 441,
+        };
 
         let string = random_string(&conf);
 
-        println!("String: {}", string);
-    }
-
-    #[test]
-    fn const_string() {
-        let conf = Config::init();
-        let len  = 5u8;
-
-        let mut rng = rng();
-        let word_num = conf.duration.as_secs() * conf.real_wpm as u64 / 60;
-
-        let mut phrase = String::new();
-        for i in 0..word_num {
-            for j in 0..len {
-                let char_fwd = conf.usables.choose(&mut rng).unwrap();
-                phrase.push(char_fwd.clone());
-            }
-            phrase.push(' ');
-        }
-
-        println!("Final String: {}", phrase);
+        play_chars(params, conf, string);
     }
 }

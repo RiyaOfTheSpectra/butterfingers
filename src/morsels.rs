@@ -24,6 +24,7 @@ use ratatui::{
         Widget,
         Row,
         Table,
+        Wrap,
     },
     layout::{
         Layout,
@@ -260,6 +261,7 @@ impl Widget for &Tutor {
         Paragraph::new(input_text)
             .left_aligned()
             .block(input_block)
+            .wrap( Wrap { trim: false } )
             .render(inside[1], buf);
 
         Paragraph::new(result_text)

@@ -26,10 +26,8 @@ impl fmt::Display for Len {
 
 #[derive(Debug,Clone)]
 pub struct Config {
-    pub real_wpm    : u8,
-    pub eff_wpm     : u8,
-    pub char_sp_ms  : u16,
-    pub ex_wd_sp_ms : u16,
+    pub trx_wpm     : u16,
+    pub chr_wpm     : u16,
     pub level       : u8,
     pub tone_hz     : u16,
     pub group_ln    : Len,
@@ -41,10 +39,8 @@ impl Config {
     pub fn init() -> Self {
         Self {
             // TODO: Find reasonable values for char_sp_ms & ex_wd_sp_ms.
-            real_wpm    : 30,
-            eff_wpm     : 30,
-            char_sp_ms  : 20,
-            ex_wd_sp_ms : 0,
+            trx_wpm     : 20,
+            chr_wpm     : 25,
             tone_hz     : 440,
             level       : 1,
             group_ln    : Len::Constant(5),
@@ -54,9 +50,9 @@ impl Config {
     }
 
     pub fn to_table(&self, constraints: [Constraint; 2]) -> Table {
-        let char_spd_row = Row::new([
-            String::from("Dit Speed (in ms)"),
-            self.char_sp_ms.to_string()
+        let trx_wpm_row = Row::new([
+            String::from("Transmission Speed, (in wpm)"),
+            self.trx_wpm.to_string()
         ]);
 
         let tone_row = Row::new([
@@ -69,9 +65,9 @@ impl Config {
             self.group_ln.to_string()
         ]);
 
-        let ex_wd_sp_row = Row::new([
-            String::from("Extra Word Spacing (in ms)"),
-            self.ex_wd_sp_ms.to_string()
+        let chr_wpm_row = Row::new([
+            String::from("Character Speed (in wpm)"),
+            self.chr_wpm.to_string()
         ]);
 
         let duration_row = Row::new([
@@ -84,7 +80,7 @@ impl Config {
         ]);
 
         Table::new(
-            [char_spd_row, tone_row, group_ln_row, ex_wd_sp_row, duration_row],
+            [trx_wpm_row, chr_wpm_row, tone_row, group_ln_row, duration_row],
             constraints
         )
     }
