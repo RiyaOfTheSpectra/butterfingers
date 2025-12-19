@@ -1,4 +1,5 @@
 use std::vec::Vec;
+use std::boxed::Box;
 use std::f32::consts::TAU;
 use std::thread::sleep;
 use std::time::Duration;
@@ -15,6 +16,7 @@ use tinyaudio::{
     OutputDeviceParameters,
     run_output_device
 };
+use ratatui::text::Line;
 
 use crate::config::{Config,Len};
 
@@ -39,6 +41,25 @@ impl Code {
             Code::Inter => char_len,
             Code::Char  => del_unit_len.saturating_mul(3),
             Code::Word  => del_unit_len.saturating_mul(7),
+        }
+    }
+}
+
+#[derive(Debug,Clone,Copy)]
+pub struct Score {
+    annotated_string: Line,
+    score: f32,
+}
+
+impl Score {
+    pub fn check_vecs(test: &Vec<char>, resp: &Vec<char>) -> Self {
+        let line_vec = Vec::new();
+        let mut matrix = Box<[[usize]]>::new();
+
+        for i in 0..resp.len() {
+            for j in 0..test.len() {
+                if 
+            }
         }
     }
 }
@@ -161,42 +182,13 @@ fn string_to_morse(string: &String) -> Seq {
     let mut code: Seq = Vec::new();
 
     for i in chars.into_iter() {
-        let char_code = CODE_DICT.get(&i).unwrap();
+        let char_code = CODE_DICT.get(&i).unwrap_or(CODE_DICT.get(&' ').unwrap());
         code.extend_from_slice(char_code);
         if i != ' ' {
             code.push(Code::Word);
         }
     }
     code
-}
-
-fn const_words(conf: &Config, len: u8, word_num: u16) -> String {
-    let mut rng = rng();
-    let word_num = conf.duration.as_secs() * conf.trx_wpm as u64 / 60;
-
-    let mut phrase = String::new();
-    for _i in 0..word_num {
-        for _j in 0..len {
-            phrase.push(conf.usables.choose(&mut rng).unwrap().clone());
-        }
-        phrase.push(' ');
-    }
-
-    phrase
-}
-
-fn rand_words(conf: &Config, low: u8, high: u8, word_num: u16) -> String {
-    let mut rng = rng();
-
-    let mut phrase = String::new();
-    for _i in 1..word_num {
-        for _j in 1..rng.random_range(low..=high) {
-            phrase.push(conf.usables.choose(&mut rng).unwrap().clone());
-        }
-        phrase.push(' ');
-    }
-
-    phrase
 }
 
 pub fn random_string(conf: &Config) -> String {
@@ -217,7 +209,7 @@ pub fn random_string(conf: &Config) -> String {
     let mut rng = rng();
     let word_num = conf.duration.as_secs() * conf.trx_wpm as u64 / 60;
 
-    let mut phrase = String::new();
+    let mut phrase = String::from(' ');
     for _i in 1..word_num {
         for _j in 1..rng.random_range(low..=high) {
             phrase.push(conf.usables.choose(&mut rng).unwrap().clone());

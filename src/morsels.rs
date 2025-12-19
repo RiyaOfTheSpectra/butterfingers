@@ -5,6 +5,7 @@ use std::time::Duration;
 use std::io;
 use std::thread::{
     JoinHandle,
+    sleep,
     spawn,
 };
 
@@ -53,6 +54,18 @@ impl TestState {
     fn start(conf: Config, params: OutputDeviceParameters) -> Self {
         let rand_string = random_string(&conf);
         let play_string = rand_string.clone();
+        sleep(conf.start_delay);
+        Self {
+            player_handle: spawn(move || {
+                play_chars(params, conf, play_string);
+            }),
+            test_string: rand_string,
+        }
+    }
+
+    fn dummy(character: char, conf: Config, params: OutputDeviceParameters) -> Self {
+        let rand_string = character.to_string();
+        let play_string = rand_string.clone();
         Self {
             player_handle: spawn(move || {play_chars(params, conf, play_string);} ),
             test_string: rand_string,
@@ -74,6 +87,7 @@ pub struct Tutor {
     config: Config,
     device_params: OutputDeviceParameters,
     test_state: Option<TestState>,
+    comments: String,
     exit: bool,
 }
 
@@ -94,6 +108,7 @@ impl Tutor {
             config: Config::init(),
             device_params: params,
             test_state: Option::None,
+            comments: String::from("Let’s get started."),
             exit : false,
         }
     }
@@ -133,12 +148,16 @@ impl Tutor {
 
     fn handle_waiting_key(&mut self, key_event: KeyEvent) {
         match key_event.code {
-            KeyCode::Char('m') => self.to_mode(Mode::Control),
-            KeyCode::Char('q') => self.exit(),
+            KeyCode::Tab => self.to_mode(Mode::Control),
+            KeyCode::Esc => self.exit(),
             KeyCode::Char(' ') => {
                 self.to_mode(Mode::Testing);
                 self.test_state =
                     Some(TestState::start(self.config.clone(), self.device_params));
+            }
+            KeyCode::Char(character) => {
+                self.test_state =
+                    Some(TestState::dummy(character, self.config.clone(), self.device_params));
             }
             _ => {}
         }
@@ -153,7 +172,9 @@ impl Tutor {
                 if self.is_ready() {
                     self.to_mode(Mode::Checking);
                 }
-                else {}
+                else {
+                    self.comments.push_str("You’re not done yet.");
+                }
             }
             _ => {}
         }
@@ -161,7 +182,8 @@ impl Tutor {
 
     fn handle_control_key(&mut self, key_event: KeyEvent) {
         match key_event.code {
-            KeyCode::Esc => self.to_mode(Mode::Waiting),
+            KeyCode::Tab => self.to_mode(Mode::Waiting),
+            KeyCode::Esc => self.exit(),
             _ => {}
         }
     }
@@ -182,9 +204,16 @@ impl Tutor {
             None => false,
             Some(ts) =>{
                 if ts.player_handle.is_finished() {
-                    &ts.test_string.len() == &self.input_letters.len()
+                    if &ts.test_string.len() == &self.input_letters.len() {
+                        true
+                    }
+                    else {
+                        self.comments = String::from("You’ve not entered the number of characters I’ve sent.");
+                        false
+                    }
                 }
                 else {
+                    self.comments = String::from("I’m still sending.");
                     false
                 }
             }
@@ -219,12 +248,13 @@ impl Widget for &Tutor {
         let title = Line::from(" Uncle Sam’s Training Terminal ".bold());
 
         let instructions = Line::from(vec![
+            "Press any key to hear it’s code.".into(),
             " Control ".into(),
-            "<M> ".blue().bold(),
+            "<Tab> ".blue().bold(),
             " Start ".into(),
-            "<SPACE>".blue().bold(),
+            "<Space>".blue().bold(),
             " Quit ".into(),
-            "<Q> ".blue().bold(),
+            "<Esc> ".blue().bold(),
         ]);
 
         let top_line = Block::bordered()
@@ -249,14 +279,13 @@ impl Widget for &Tutor {
             .title(Line::from("Controls").left_aligned())
             .border_set(border::PLAIN);
 
-        let input_text = Text::from(
-            vec![
-                Line::from(self.input_letters.clone().yellow()),
+        let input_text = Text::from(vec![
+            Line::from(self.input_letters.clone().yellow()),
         ]);
 
         let result_text = Text::from(vec![]);
 
-        let comment_text = Text::from(format!("{0:?}", self.mode));
+        let comment_text = Text::from(format!("{0:?}", self.comments));
 
         Paragraph::new(input_text)
             .left_aligned()
