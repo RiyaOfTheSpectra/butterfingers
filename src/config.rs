@@ -2,10 +2,6 @@ use std::string::String;
 use std::time::Duration;
 use std::fmt;
 
-use serde::{
-    Serialize,
-    Deserialize,
-};
 use ratatui::{
     layout::Constraint,
     widgets::{
@@ -16,7 +12,7 @@ use ratatui::{
 
 use crate::keying::gen_lev_chars;
 
-#[derive(Debug,Clone,Copy,Serialize,Deserialize)]
+#[derive(Debug,Clone,Copy)]
 pub enum Len {
     Constant(u8),
     Random(u8, u8),
@@ -31,7 +27,7 @@ impl fmt::Display for Len {
     }
 }
 
-#[derive(Debug,Clone,Copy,Serialize,Deserialize)]
+#[derive(Debug,Clone,Copy)]
 struct FileConf {
     trx_wpm     : u16,
     chr_wpm     : u16,

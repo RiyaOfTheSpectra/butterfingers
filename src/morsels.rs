@@ -245,7 +245,7 @@ impl Widget for &Tutor {
             ])
             .split(inside[2]);
 
-        let title = Line::from(" Uncle Sam’s Training Terminal ".bold());
+        let title = Line::from(" Butterfingers Training Terminal ".bold());
 
         let instructions = Line::from(vec![
             "Press any key to hear it’s code.".into(),

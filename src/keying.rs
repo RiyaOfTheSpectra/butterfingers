@@ -45,22 +45,18 @@ impl Code {
     }
 }
 
-#[derive(Debug,Clone,Copy)]
-pub struct Score {
-    annotated_string: Line,
+#[derive(Debug,Clone)]
+pub struct Score<'a> {
+    annotated_string: Line<'a>,
     score: f32,
 }
 
-impl Score {
+impl Score<'_> {
     pub fn check_vecs(test: &Vec<char>, resp: &Vec<char>) -> Self {
-        let line_vec = Vec::new();
-        let mut matrix = Box<[[usize]]>::new();
+        //let line_vec = Vec::new();
+        //let mut matrix = Box::<[[usize]]>::new();
 
-        for i in 0..resp.len() {
-            for j in 0..test.len() {
-                if 
-            }
-        }
+        todo!();
     }
 }
 
